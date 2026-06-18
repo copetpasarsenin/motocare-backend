@@ -1,0 +1,1238 @@
+basePath: /
+definitions:
+  handlers.BookingListResponseDoc:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Booking'
+        type: array
+      message:
+        example: success
+        type: string
+      meta:
+        $ref: '#/definitions/handlers.MetaResponseDoc'
+    type: object
+  handlers.BookingRequestDoc:
+    properties:
+      booking_date:
+        example: "2026-06-18"
+        type: string
+      customer_name:
+        example: Budi Santoso
+        type: string
+      notes:
+        example: Servis pagi jika tersedia.
+        type: string
+      phone:
+        example: "081234560001"
+        type: string
+      service_id:
+        example: 1
+        type: integer
+      status:
+        enum:
+        - pending
+        - confirmed
+        - in_progress
+        - completed
+        - cancelled
+        example: pending
+        type: string
+      vehicle_name:
+        example: Honda Beat
+        type: string
+      vehicle_plate:
+        example: B 1234 MTC
+        type: string
+    type: object
+  handlers.BookingResponseDoc:
+    properties:
+      data:
+        $ref: '#/definitions/models.Booking'
+      message:
+        example: booking berhasil diambil
+        type: string
+    type: object
+  handlers.BookingStatusRequestDoc:
+    properties:
+      status:
+        enum:
+        - pending
+        - confirmed
+        - in_progress
+        - completed
+        - cancelled
+        example: confirmed
+        type: string
+    type: object
+  handlers.CategoryListResponseDoc:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.ServiceCategory'
+        type: array
+      message:
+        example: success
+        type: string
+      meta:
+        $ref: '#/definitions/handlers.MetaResponseDoc'
+    type: object
+  handlers.CategoryRequestDoc:
+    properties:
+      description:
+        example: Layanan penggantian oli mesin dan oli transmisi.
+        type: string
+      name:
+        example: Ganti Oli
+        type: string
+    type: object
+  handlers.CategoryResponseDoc:
+    properties:
+      data:
+        $ref: '#/definitions/models.ServiceCategory'
+      message:
+        example: kategori berhasil diambil
+        type: string
+    type: object
+  handlers.ChangePasswordRequestDoc:
+    properties:
+      current_password:
+        example: password123
+        type: string
+      new_password:
+        example: newpassword123
+        type: string
+      user_id:
+        example: 2
+        type: integer
+    type: object
+  handlers.DashboardBookingStatusDoc:
+    properties:
+      status:
+        example: pending
+        type: string
+      total:
+        example: 3
+        type: integer
+    type: object
+  handlers.DashboardStatsDoc:
+    properties:
+      bookings_by_status:
+        items:
+          $ref: '#/definitions/handlers.DashboardBookingStatusDoc'
+        type: array
+      completed_bookings:
+        example: 2
+        type: integer
+      estimated_revenue:
+        example: 500000
+        type: integer
+      pending_bookings:
+        example: 3
+        type: integer
+      top_services:
+        items:
+          $ref: '#/definitions/handlers.DashboardTopServiceDoc'
+        type: array
+      total_bookings:
+        example: 10
+        type: integer
+      total_categories:
+        example: 10
+        type: integer
+      total_services:
+        example: 10
+        type: integer
+    type: object
+  handlers.DashboardTopServiceDoc:
+    properties:
+      service_name:
+        example: Ganti Oli Mesin
+        type: string
+      total_bookings:
+        example: 5
+        type: integer
+    type: object
+  handlers.ErrorResponseDoc:
+    properties:
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        example: validasi gagal
+        type: string
+    type: object
+  handlers.LoginDataDoc:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      user:
+        $ref: '#/definitions/handlers.UserDoc'
+    type: object
+  handlers.LoginRequestDoc:
+    properties:
+      email:
+        example: admin@motocare.test
+        type: string
+      password:
+        example: password123
+        type: string
+    type: object
+  handlers.LoginResponseDoc:
+    properties:
+      data:
+        $ref: '#/definitions/handlers.LoginDataDoc'
+      message:
+        example: login berhasil
+        type: string
+    type: object
+  handlers.MessageResponseDoc:
+    properties:
+      message:
+        example: success
+        type: string
+    type: object
+  handlers.MetaResponseDoc:
+    properties:
+      limit:
+        example: 10
+        type: integer
+      page:
+        example: 1
+        type: integer
+      total:
+        example: 100
+        type: integer
+      total_pages:
+        example: 10
+        type: integer
+    type: object
+  handlers.RegisterRequestDoc:
+    properties:
+      email:
+        example: budi@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+      role:
+        enum:
+        - admin
+        - user
+        example: user
+        type: string
+      username:
+        example: budi
+        type: string
+    type: object
+  handlers.RegisterResponseDoc:
+    properties:
+      data:
+        $ref: '#/definitions/handlers.UserDataDoc'
+      message:
+        example: register berhasil
+        type: string
+    type: object
+  handlers.ServiceListResponseDoc:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Service'
+        type: array
+      message:
+        example: success
+        type: string
+      meta:
+        $ref: '#/definitions/handlers.MetaResponseDoc'
+    type: object
+  handlers.ServiceRequestDoc:
+    properties:
+      category_id:
+        example: 1
+        type: integer
+      description:
+        example: Penggantian oli mesin standar bengkel.
+        type: string
+      duration_minutes:
+        example: 30
+        type: integer
+      name:
+        example: Ganti Oli Mesin
+        type: string
+      price:
+        example: 65000
+        type: integer
+      status:
+        enum:
+        - active
+        - inactive
+        example: active
+        type: string
+    type: object
+  handlers.ServiceResponseDoc:
+    properties:
+      data:
+        $ref: '#/definitions/models.Service'
+      message:
+        example: layanan berhasil diambil
+        type: string
+    type: object
+  handlers.UserDataDoc:
+    properties:
+      user:
+        $ref: '#/definitions/handlers.UserDoc'
+    type: object
+  handlers.UserDoc:
+    properties:
+      created_at:
+        example: "2026-06-17T15:04:05+07:00"
+        type: string
+      email:
+        example: admin@motocare.test
+        type: string
+      id:
+        example: 1
+        type: integer
+      role:
+        example: admin
+        type: string
+      updated_at:
+        example: "2026-06-17T15:04:05+07:00"
+        type: string
+      username:
+        example: admin
+        type: string
+    type: object
+  handlers.UserResponseDoc:
+    properties:
+      data:
+        $ref: '#/definitions/handlers.UserDataDoc'
+      message:
+        example: data user berhasil diambil
+        type: string
+    type: object
+  models.Booking:
+    properties:
+      booking_date:
+        type: string
+      created_at:
+        type: string
+      customer_name:
+        type: string
+      id:
+        type: integer
+      notes:
+        type: string
+      phone:
+        type: string
+      service:
+        $ref: '#/definitions/models.Service'
+      service_id:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+      vehicle_name:
+        type: string
+      vehicle_plate:
+        type: string
+    type: object
+  models.Service:
+    properties:
+      bookings:
+        items:
+          $ref: '#/definitions/models.Booking'
+        type: array
+      category:
+        $ref: '#/definitions/models.ServiceCategory'
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      duration_minutes:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.ServiceCategory:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      services:
+        items:
+          $ref: '#/definitions/models.Service'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  models.User:
+    properties:
+      bookings:
+        items:
+          $ref: '#/definitions/models.Booking'
+        type: array
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: admin@motocare.test
+    name: MotoCare Dashboard
+  description: |-
+    REST API for MotoCare Dashboard motorcycle service booking and management.
+    Use the Authorize button with this format: Bearer <token>.
+  license:
+    name: MIT
+  termsOfService: http://swagger.io/terms/
+  title: MotoCare Dashboard API
+  version: "1.0"
+paths:
+  /api/bookings:
+    get:
+      description: JWT required. Admin sees all bookings, user sees only their own
+        bookings.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search customer, phone, vehicle name, or plate
+        in: query
+        name: search
+        type: string
+      - description: Filter by status
+        enum:
+        - pending
+        - confirmed
+        - in_progress
+        - completed
+        - cancelled
+        in: query
+        name: status
+        type: string
+      - description: Sort column
+        enum:
+        - id
+        - customer_name
+        - booking_date
+        - status
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/handlers.BookingListResponseDoc'
+        "400":
+          description: query tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: List bookings
+      tags:
+      - Bookings
+    post:
+      consumes:
+      - application/json
+      description: JWT required. User creates a booking for their own account. User-created
+        bookings must be pending.
+      parameters:
+      - description: Booking request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.BookingRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: booking berhasil dibuat
+          schema:
+            $ref: '#/definitions/handlers.BookingResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Create booking
+      tags:
+      - Bookings
+  /api/bookings/{id}:
+    delete:
+      description: Admin only. Delete booking.
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: booking berhasil dihapus
+          schema:
+            $ref: '#/definitions/handlers.MessageResponseDoc'
+        "400":
+          description: id tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: booking tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Delete booking
+      tags:
+      - Bookings
+    get:
+      description: JWT required. Admin can view any booking, user can view only their
+        own booking.
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: booking berhasil diambil
+          schema:
+            $ref: '#/definitions/handlers.BookingResponseDoc'
+        "400":
+          description: id tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: booking tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Get booking detail
+      tags:
+      - Bookings
+    put:
+      consumes:
+      - application/json
+      description: Admin only. Update booking status.
+      parameters:
+      - description: Booking ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Booking status request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.BookingStatusRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status booking berhasil diubah
+          schema:
+            $ref: '#/definitions/handlers.BookingResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: booking tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Update booking status
+      tags:
+      - Bookings
+  /api/categories:
+    get:
+      description: Public endpoint to list service categories.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/handlers.CategoryListResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      summary: List categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Admin only. Create a service category.
+      parameters:
+      - description: Category request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CategoryRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: kategori berhasil dibuat
+          schema:
+            $ref: '#/definitions/handlers.CategoryResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Create category
+      tags:
+      - Categories
+  /api/categories/{id}:
+    delete:
+      description: Admin only. Delete a service category.
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: kategori berhasil dihapus
+          schema:
+            $ref: '#/definitions/handlers.MessageResponseDoc'
+        "400":
+          description: id tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: kategori tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Delete category
+      tags:
+      - Categories
+    get:
+      description: Public endpoint to get one service category by ID.
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: kategori berhasil diambil
+          schema:
+            $ref: '#/definitions/handlers.CategoryResponseDoc'
+        "400":
+          description: id tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: kategori tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      summary: Get category detail
+      tags:
+      - Categories
+    put:
+      consumes:
+      - application/json
+      description: Admin only. Update a service category.
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CategoryRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: kategori berhasil diubah
+          schema:
+            $ref: '#/definitions/handlers.CategoryResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: kategori tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Update category
+      tags:
+      - Categories
+  /api/dashboard/stats:
+    get:
+      description: JWT required. Admin sees all data, user sees only their own booking
+        statistics.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: dashboard statistics
+          schema:
+            $ref: '#/definitions/handlers.DashboardStatsDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Dashboard statistics
+      tags:
+      - Dashboard
+  /api/services:
+    get:
+      description: Public endpoint to list services with pagination, search, filters,
+        and sorting.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search by name or description
+        in: query
+        name: search
+        type: string
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      - description: Filter by status
+        enum:
+        - active
+        - inactive
+        in: query
+        name: status
+        type: string
+      - description: Sort column
+        enum:
+        - id
+        - name
+        - price
+        - duration_minutes
+        - status
+        - created_at
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/handlers.ServiceListResponseDoc'
+        "400":
+          description: query tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      summary: List services
+      tags:
+      - Services
+    post:
+      consumes:
+      - application/json
+      description: Admin only. Create a motorcycle service.
+      parameters:
+      - description: Service request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ServiceRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: layanan berhasil dibuat
+          schema:
+            $ref: '#/definitions/handlers.ServiceResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Create service
+      tags:
+      - Services
+  /api/services/{id}:
+    delete:
+      description: Admin only. Delete a motorcycle service.
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: layanan berhasil dihapus
+          schema:
+            $ref: '#/definitions/handlers.MessageResponseDoc'
+        "400":
+          description: id tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: layanan tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Delete service
+      tags:
+      - Services
+    get:
+      description: Public endpoint to get one service by ID.
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: layanan berhasil diambil
+          schema:
+            $ref: '#/definitions/handlers.ServiceResponseDoc'
+        "400":
+          description: id tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: layanan tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      summary: Get service detail
+      tags:
+      - Services
+    put:
+      consumes:
+      - application/json
+      description: Admin only. Update a motorcycle service.
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Service request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ServiceRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: layanan berhasil diubah
+          schema:
+            $ref: '#/definitions/handlers.ServiceResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: layanan tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Update service
+      tags:
+      - Services
+  /change-password:
+    put:
+      consumes:
+      - application/json
+      description: Change own password. Admin may change another user's password by
+        sending user_id.
+      parameters:
+      - description: Change password request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ChangePasswordRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: password berhasil diubah
+          schema:
+            $ref: '#/definitions/handlers.MessageResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: token tidak valid atau current_password salah
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "403":
+          description: akses ditolak
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: user tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Change password
+      tags:
+      - Auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token. Use the returned token
+        in Swagger Authorize as Bearer <token>.
+      parameters:
+      - description: Login request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: login berhasil
+          schema:
+            $ref: '#/definitions/handlers.LoginResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "401":
+          description: email atau password salah
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      summary: Login user
+      tags:
+      - Auth
+  /me:
+    get:
+      description: Return authenticated user profile from JWT token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: data user berhasil diambil
+          schema:
+            $ref: '#/definitions/handlers.UserResponseDoc'
+        "401":
+          description: token tidak valid
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "404":
+          description: user tidak ditemukan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account. Role is optional and defaults to user.
+      parameters:
+      - description: Register request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RegisterRequestDoc'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: register berhasil
+          schema:
+            $ref: '#/definitions/handlers.RegisterResponseDoc'
+        "400":
+          description: validasi gagal
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "409":
+          description: username atau email sudah digunakan
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseDoc'
+      summary: Register user
+      tags:
+      - Auth
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer" followed by a space and JWT token. Example: Bearer
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
