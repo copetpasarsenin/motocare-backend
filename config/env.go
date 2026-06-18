@@ -23,11 +23,11 @@ func GetEnv(key string, fallback string) string {
 }
 
 func GetAppPort() string {
-	if port := os.Getenv("APP_PORT"); port != "" {
+	if port := os.Getenv("PORT"); port != "" {
 		return port
 	}
 
-	if port := os.Getenv("PORT"); port != "" {
+	if port := os.Getenv("APP_PORT"); port != "" {
 		return port
 	}
 

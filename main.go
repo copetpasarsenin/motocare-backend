@@ -24,7 +24,6 @@ import (
 // @contact.name MotoCare Dashboard
 // @contact.email admin@motocare.test
 // @license.name MIT
-// @host localhost:8080
 // @BasePath /
 // @schemes http https
 // @securityDefinitions.apikey BearerAuth
