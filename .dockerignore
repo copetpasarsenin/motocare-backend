@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+.env.*
+tmp
+tmp/
+server
+app
+*.exe
+*.test
+*.log
