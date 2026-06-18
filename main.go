@@ -38,8 +38,13 @@ func main() {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
-	if err := config.AutoMigrate(db); err != nil {
-		log.Fatalf("failed to run database migration: %v", err)
+	if shouldRunMigrations() {
+		log.Println("Running AutoMigrate")
+		if err := config.AutoMigrate(db); err != nil {
+			log.Fatalf("failed to run database migration: %v", err)
+		}
+	} else if isProduction() {
+		log.Println("Skipping AutoMigrate in production")
 	}
 
 	if strings.EqualFold(config.GetEnv("RUN_SEEDER", "false"), "true") {
@@ -79,4 +84,16 @@ func main() {
 	port := config.GetAppPort()
 	log.Printf("server running on port %s", port)
 	log.Fatal(app.Listen(fmt.Sprintf(":%s", port)))
+}
+
+func shouldRunMigrations() bool {
+	if strings.EqualFold(config.GetEnv("RUN_MIGRATIONS", "false"), "true") {
+		return true
+	}
+
+	return strings.EqualFold(config.GetEnv("APP_ENV", ""), "development")
+}
+
+func isProduction() bool {
+	return strings.EqualFold(config.GetEnv("APP_ENV", ""), "production")
 }
