@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"strings"
+
 	"motocare-dashboard/backend/middlewares"
 	"motocare-dashboard/backend/models"
 	"motocare-dashboard/backend/repositories"
 	"motocare-dashboard/backend/utils"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -49,7 +50,7 @@ func (h *BookingHandler) List(c *fiber.Ctx) error {
 	}
 
 	var userID uint
-	if claims.Role == "user" {
+	if strings.EqualFold(claims.Role, "user") {
 		userID = claims.UserID
 	}
 
@@ -93,7 +94,7 @@ func (h *BookingHandler) Detail(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal mengambil booking")
 	}
 
-	if claims.Role == "user" && booking.UserID != claims.UserID {
+	if strings.EqualFold(claims.Role, "user") && booking.UserID != claims.UserID {
 		return utils.ErrorResponse(c, fiber.StatusForbidden, "user hanya dapat melihat booking sendiri")
 	}
 
@@ -126,7 +127,7 @@ func (h *BookingHandler) Create(c *fiber.Ctx) error {
 		request.Status = "pending"
 	}
 
-	if claims.Role == "user" && request.Status != "pending" {
+	if strings.EqualFold(claims.Role, "user") && request.Status != "pending" {
 		return utils.ErrorResponse(c, fiber.StatusForbidden, "user hanya dapat membuat booking dengan status pending")
 	}
 

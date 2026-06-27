@@ -299,7 +299,7 @@ func DeleteBookingDoc() {}
 
 // DashboardStatsDocEndpoint godoc
 // @Summary Dashboard statistics
-// @Description JWT required. Admin sees all data, user sees only their own booking statistics.
+// @Description JWT required. Admin only. Shows all dashboard statistics.
 // @Tags Dashboard
 // @Produce json
 // @Security BearerAuth

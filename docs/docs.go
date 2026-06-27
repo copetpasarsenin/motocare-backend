@@ -661,7 +661,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "JWT required. Admin sees all data, user sees only their own booking statistics.",
+                "description": "JWT required. Admin only. Shows all dashboard statistics.",
                 "produces": [
                     "application/json"
                 ],

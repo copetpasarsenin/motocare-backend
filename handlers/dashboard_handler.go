@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"strings"
+
 	"motocare-dashboard/backend/middlewares"
 	"motocare-dashboard/backend/repositories"
 	"motocare-dashboard/backend/utils"
@@ -23,7 +25,7 @@ func (h *DashboardHandler) Stats(c *fiber.Ctx) error {
 	}
 
 	var userID uint
-	if claims.Role == "user" {
+	if strings.EqualFold(claims.Role, "user") {
 		userID = claims.UserID
 	}
 
