@@ -1,4 +1,4 @@
-package routes
+﻿package routes
 
 import (
 	"motocare-dashboard/backend/handlers"
@@ -27,19 +27,19 @@ func SetupCRUDRoutes(app *fiber.App, db *gorm.DB) {
 	api.Get("/services", serviceHandler.List)
 	api.Get("/services/:id", serviceHandler.Detail)
 
-	admin := api.Group("", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"))
-	admin.Post("/categories", categoryHandler.Create)
-	admin.Put("/categories/:id", categoryHandler.Update)
-	admin.Delete("/categories/:id", categoryHandler.Delete)
-	admin.Post("/services", serviceHandler.Create)
-	admin.Put("/services/:id", serviceHandler.Update)
-	admin.Delete("/services/:id", serviceHandler.Delete)
-	admin.Put("/bookings/:id", bookingHandler.UpdateStatus)
-	admin.Delete("/bookings/:id", bookingHandler.Delete)
-	admin.Get("/dashboard/stats", dashboardHandler.Stats)
+	// USER + ADMIN routes (register first to avoid conflicts)
+	api.Get("/bookings", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.List)
+	api.Get("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.Detail)
+	api.Post("/bookings", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.Create)
 
-	protected := api.Group("", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"))
-	protected.Get("/bookings", bookingHandler.List)
-	protected.Get("/bookings/:id", bookingHandler.Detail)
-	protected.Post("/bookings", bookingHandler.Create)
+	// ADMIN-only routes
+	api.Post("/categories", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), categoryHandler.Create)
+	api.Put("/categories/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), categoryHandler.Update)
+	api.Delete("/categories/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), categoryHandler.Delete)
+	api.Post("/services", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), serviceHandler.Create)
+	api.Put("/services/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), serviceHandler.Update)
+	api.Delete("/services/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), serviceHandler.Delete)
+	api.Put("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), bookingHandler.UpdateStatus)
+	api.Delete("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), bookingHandler.Delete)
+	api.Get("/dashboard/stats", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), dashboardHandler.Stats)
 }
