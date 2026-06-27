@@ -1,4 +1,4 @@
-﻿package routes
+package routes
 
 import (
 	"motocare-dashboard/backend/handlers"
@@ -39,7 +39,8 @@ func SetupCRUDRoutes(app *fiber.App, db *gorm.DB) {
 	api.Post("/services", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), serviceHandler.Create)
 	api.Put("/services/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), serviceHandler.Update)
 	api.Delete("/services/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), serviceHandler.Delete)
-	api.Put("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), bookingHandler.UpdateStatus)
+	api.Put("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.UpdateStatus)
 	api.Delete("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), bookingHandler.Delete)
 	api.Get("/dashboard/stats", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), dashboardHandler.Stats)
 }
+

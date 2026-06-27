@@ -22,7 +22,7 @@ type BookingRepository interface {
 	List(params BookingListParams) ([]models.Booking, int64, error)
 	FindByID(id uint) (*models.Booking, error)
 	Create(booking *models.Booking) error
-	UpdateStatus(id uint, status string) (*models.Booking, error)
+	Update(booking *models.Booking) (*models.Booking, error)
 	Delete(id uint) error
 }
 
@@ -75,18 +75,12 @@ func (r *bookingRepository) Create(booking *models.Booking) error {
 	return r.db.Create(booking).Error
 }
 
-func (r *bookingRepository) UpdateStatus(id uint, status string) (*models.Booking, error) {
-	booking, err := r.FindByID(id)
-	if err != nil {
-		return nil, err
-	}
-
-	booking.Status = status
+func (r *bookingRepository) Update(booking *models.Booking) (*models.Booking, error) {
 	if err := r.db.Save(booking).Error; err != nil {
 		return nil, err
 	}
 
-	return r.FindByID(id)
+	return r.FindByID(booking.ID)
 }
 
 func (r *bookingRepository) Delete(id uint) error {
@@ -118,3 +112,5 @@ func applyBookingFilters(query *gorm.DB, params BookingListParams) *gorm.DB {
 
 	return query
 }
+
+
