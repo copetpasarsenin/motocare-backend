@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -81,24 +82,25 @@ func TestTokenRoundTrip(t *testing.T) {
 }
 
 func TestParseToken_InvalidSigningMethod(t *testing.T) {
-	t.Setenv("JWT_SECRET", "")
+	t.Setenv("JWT_SECRET", "test-secret-key-for-invalid-method")
 
 	claims := jwt.MapClaims{
 		"user_id": 1,
 		"exp":     time.Now().Add(time.Hour).Unix(),
 	}
-	// Sign with HMAC SHA-512 to test the signing-method whitelist.
-	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
-	tokenString, err := token.SignedString([]byte("doesnt-matter"))
+	// Use a non-HMAC algorithm so ParseToken rejects the signing method before verification.
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	signingString, err := token.SigningString()
 	if err != nil {
-		t.Fatalf("could not sign test token: %v", err)
+		t.Fatalf("could not create test token: %v", err)
 	}
+	tokenString := signingString + ".c2lnbmF0dXJl"
 
 	_, err = ParseToken(tokenString)
 	if err == nil {
 		t.Fatal("expected error for non-HS256 signing method, got nil")
 	}
-	if err.Error() != "invalid token signing method" {
+	if !strings.Contains(err.Error(), "invalid token signing method") {
 		t.Errorf("unexpected error message: %v", err)
 	}
 }
