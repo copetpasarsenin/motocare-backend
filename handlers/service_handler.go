@@ -4,6 +4,7 @@ import (
 	"motocare-dashboard/backend/models"
 	"motocare-dashboard/backend/repositories"
 	"motocare-dashboard/backend/utils"
+	"strconv"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -38,9 +39,14 @@ func NewServiceHandler(serviceRepository repositories.ServiceRepository, categor
 
 func (h *ServiceHandler) List(c *fiber.Ctx) error {
 	page, limit := utils.ParsePagination(c)
-	categoryID, err := parseUintQuery(c, "category_id")
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+
+	var categoryID uint
+	if raw := strings.TrimSpace(c.Query("category_id")); raw != "" {
+		parsed, parseErr := strconv.ParseUint(raw, 10, 64)
+		if parseErr != nil {
+			return utils.ErrorResponse(c, fiber.StatusBadRequest, "category_id tidak valid")
+		}
+		categoryID = uint(parsed)
 	}
 
 	status := strings.TrimSpace(strings.ToLower(c.Query("status")))

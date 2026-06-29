@@ -293,4 +293,3 @@ func (h *BookingHandler) Delete(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "booking berhasil dihapus", nil)
 }
-

@@ -22,20 +22,6 @@ func parseIDParam(c *fiber.Ctx) (uint, error) {
 	return uint(id), nil
 }
 
-func parseUintQuery(c *fiber.Ctx, key string) (uint, error) {
-	value := strings.TrimSpace(c.Query(key))
-	if value == "" {
-		return 0, nil
-	}
-
-	parsedValue, err := strconv.ParseUint(value, 10, 64)
-	if err != nil {
-		return 0, fiber.NewError(fiber.StatusBadRequest, key+" tidak valid")
-	}
-
-	return uint(parsedValue), nil
-}
-
 func parseBookingDate(value string) (time.Time, error) {
 	value = strings.TrimSpace(value)
 	if value == "" {
