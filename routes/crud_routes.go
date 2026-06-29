@@ -22,6 +22,7 @@ func SetupCRUDRoutes(app *fiber.App, db *gorm.DB) {
 
 	api := app.Group("/api")
 
+	api.Get("/public/services", serviceHandler.PublicList)
 	api.Get("/categories", categoryHandler.List)
 	api.Get("/categories/:id", categoryHandler.Detail)
 	api.Get("/services", serviceHandler.List)
@@ -43,4 +44,3 @@ func SetupCRUDRoutes(app *fiber.App, db *gorm.DB) {
 	api.Delete("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), bookingHandler.Delete)
 	api.Get("/dashboard/stats", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin"), dashboardHandler.Stats)
 }
-

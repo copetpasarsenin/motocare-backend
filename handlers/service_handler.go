@@ -33,8 +33,73 @@ type updateServiceRequest struct {
 	Status          string `json:"status" validate:"required,oneof=active inactive"`
 }
 
+type publicServiceCategoryResponse struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+}
+
+type publicServiceResponse struct {
+	ID              uint                           `json:"id"`
+	Name            string                         `json:"name"`
+	Description     string                         `json:"description"`
+	Price           int64                          `json:"price"`
+	DurationMinutes int                            `json:"duration_minutes"`
+	Duration        int                            `json:"duration"`
+	Category        *publicServiceCategoryResponse `json:"category,omitempty"`
+	Image           *string                        `json:"image"`
+	IsActive        bool                           `json:"is_active"`
+}
+
 func NewServiceHandler(serviceRepository repositories.ServiceRepository, categoryRepository repositories.CategoryRepository) *ServiceHandler {
 	return &ServiceHandler{serviceRepository: serviceRepository, categoryRepository: categoryRepository}
+}
+
+func toPublicServiceResponse(service models.Service) publicServiceResponse {
+	var category *publicServiceCategoryResponse
+	if service.Category.ID != 0 {
+		category = &publicServiceCategoryResponse{
+			ID:   service.Category.ID,
+			Name: service.Category.Name,
+		}
+	}
+
+	return publicServiceResponse{
+		ID:              service.ID,
+		Name:            service.Name,
+		Description:     service.Description,
+		Price:           service.Price,
+		DurationMinutes: service.DurationMinutes,
+		Duration:        service.DurationMinutes,
+		Category:        category,
+		Image:           nil,
+		IsActive:        service.Status == "active",
+	}
+}
+
+func (h *ServiceHandler) PublicList(c *fiber.Ctx) error {
+	page, limit := utils.ParsePagination(c)
+
+	services, total, err := h.serviceRepository.List(repositories.ServiceListParams{
+		Page:      page,
+		Limit:     limit,
+		Status:    "active",
+		SortBy:    c.Query("sort_by"),
+		SortOrder: c.Query("sort_order"),
+	})
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal mengambil layanan publik")
+	}
+
+	publicServices := make([]publicServiceResponse, 0, len(services))
+	for _, service := range services {
+		publicServices = append(publicServices, toPublicServiceResponse(service))
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "success",
+		"data":    publicServices,
+		"meta":    utils.NewPaginationMeta(page, limit, total),
+	})
 }
 
 func (h *ServiceHandler) List(c *fiber.Ctx) error {
