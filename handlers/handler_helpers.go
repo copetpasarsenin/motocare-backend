@@ -24,9 +24,6 @@ func parseIDParam(c *fiber.Ctx) (uint, error) {
 
 func parseBookingDate(value string) (time.Time, error) {
 	value = strings.TrimSpace(value)
-	if value == "" {
-		return time.Now(), nil
-	}
 
 	bookingDate, err := time.Parse(time.RFC3339, value)
 	if err == nil {

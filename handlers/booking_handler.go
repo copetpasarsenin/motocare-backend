@@ -25,7 +25,7 @@ type createBookingRequest struct {
 	Phone        string `json:"phone" validate:"required"`
 	VehicleName  string `json:"vehicle_name" validate:"required"`
 	VehiclePlate string `json:"vehicle_plate" validate:"required"`
-	BookingDate  string `json:"booking_date"`
+	BookingDate  string `json:"booking_date" validate:"required"`
 	Status       string `json:"status" validate:"omitempty,oneof=pending confirmed in_progress completed cancelled"`
 	Notes        string `json:"notes"`
 }
@@ -38,6 +38,16 @@ type updateBookingStatusRequest struct {
 	VehiclePlate string `json:"vehicle_plate"`
 	BookingDate  string `json:"booking_date"`
 	Status       string `json:"status" validate:"omitempty,oneof=pending confirmed in_progress completed cancelled"`
+	Notes        string `json:"notes"`
+}
+
+type updateBookingDetailsRequest struct {
+	ServiceID    uint   `json:"service_id" validate:"required"`
+	CustomerName string `json:"customer_name" validate:"required"`
+	Phone        string `json:"phone" validate:"required"`
+	VehicleName  string `json:"vehicle_name" validate:"required"`
+	VehiclePlate string `json:"vehicle_plate" validate:"required"`
+	BookingDate  string `json:"booking_date" validate:"required"`
 	Notes        string `json:"notes"`
 }
 
@@ -234,18 +244,43 @@ func (h *BookingHandler) UpdateStatus(c *fiber.Ctx) error {
 		if request.Status != "cancelled" && time.Until(booking.BookingDate) <= time.Hour {
 			return utils.ErrorResponse(c, fiber.StatusBadRequest, "booking hanya dapat diedit lebih dari 1 jam sebelum jadwal")
 		}
+		if request.Status == "cancelled" {
+			booking.Status = request.Status
+		} else if err := h.applyBookingDetailsUpdate(booking, updateBookingDetailsRequest{
+			ServiceID:    request.ServiceID,
+			CustomerName: request.CustomerName,
+			Phone:        request.Phone,
+			VehicleName:  request.VehicleName,
+			VehiclePlate: request.VehiclePlate,
+			BookingDate:  request.BookingDate,
+			Notes:        request.Notes,
+		}); err != nil {
+			return err
+		}
+	} else {
+		if request.Status != "" {
+			booking.Status = request.Status
+		}
+		if err := h.applyAdminBookingUpdate(booking, request); err != nil {
+			return err
+		}
 	}
 
-	if request.Status != "" {
-		booking.Status = request.Status
+	updatedBooking, err := h.bookingRepository.Update(booking)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal mengubah booking")
 	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "booking berhasil diubah", updatedBooking)
+}
+func (h *BookingHandler) applyAdminBookingUpdate(booking *models.Booking, request updateBookingStatusRequest) error {
 	if request.ServiceID != 0 {
 		serviceExists, err := h.serviceRepository.Exists(request.ServiceID)
 		if err != nil {
-			return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal memeriksa layanan")
+			return fiber.NewError(fiber.StatusInternalServerError, "gagal memeriksa layanan")
 		}
 		if !serviceExists {
-			return utils.ErrorResponse(c, fiber.StatusBadRequest, "service_id tidak ditemukan")
+			return fiber.NewError(fiber.StatusBadRequest, "service_id tidak ditemukan")
 		}
 		booking.ServiceID = request.ServiceID
 	}
@@ -264,19 +299,49 @@ func (h *BookingHandler) UpdateStatus(c *fiber.Ctx) error {
 	if request.BookingDate != "" {
 		bookingDate, err := parseBookingDate(request.BookingDate)
 		if err != nil {
-			return utils.ErrorResponse(c, fiber.StatusBadRequest, "booking_date harus format RFC3339 atau YYYY-MM-DD")
+			return fiber.NewError(fiber.StatusBadRequest, "booking_date harus format RFC3339 atau YYYY-MM-DD")
 		}
 		booking.BookingDate = bookingDate
 	}
 	booking.Notes = request.Notes
+	return nil
+}
 
-	updatedBooking, err := h.bookingRepository.Update(booking)
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal mengubah booking")
+func (h *BookingHandler) applyBookingDetailsUpdate(booking *models.Booking, request updateBookingDetailsRequest) error {
+	request.CustomerName = strings.TrimSpace(request.CustomerName)
+	request.Phone = strings.TrimSpace(request.Phone)
+	request.VehicleName = strings.TrimSpace(request.VehicleName)
+	request.VehiclePlate = strings.TrimSpace(strings.ToUpper(request.VehiclePlate))
+	request.BookingDate = strings.TrimSpace(request.BookingDate)
+	request.Notes = strings.TrimSpace(request.Notes)
+
+	if validationErrors := utils.ValidateStruct(request); validationErrors != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "detail booking wajib diisi lengkap")
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "booking berhasil diubah", updatedBooking)
+	serviceExists, err := h.serviceRepository.Exists(request.ServiceID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "gagal memeriksa layanan")
+	}
+	if !serviceExists {
+		return fiber.NewError(fiber.StatusBadRequest, "service_id tidak ditemukan")
+	}
+
+	bookingDate, err := parseBookingDate(request.BookingDate)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "booking_date harus format RFC3339 atau YYYY-MM-DD")
+	}
+
+	booking.ServiceID = request.ServiceID
+	booking.CustomerName = request.CustomerName
+	booking.Phone = request.Phone
+	booking.VehicleName = request.VehicleName
+	booking.VehiclePlate = request.VehiclePlate
+	booking.BookingDate = bookingDate
+	booking.Notes = request.Notes
+	return nil
 }
+
 func (h *BookingHandler) Delete(c *fiber.Ctx) error {
 	id, err := parseIDParam(c)
 	if err != nil {

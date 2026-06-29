@@ -20,7 +20,7 @@ type createServiceRequest struct {
 	Name            string `json:"name" validate:"required"`
 	Description     string `json:"description"`
 	Price           int64  `json:"price" validate:"gte=0"`
-	DurationMinutes int    `json:"duration_minutes" validate:"gte=0"`
+	DurationMinutes int    `json:"duration_minutes" validate:"gt=0"`
 	Status          string `json:"status" validate:"omitempty,oneof=active inactive"`
 }
 
@@ -29,7 +29,7 @@ type updateServiceRequest struct {
 	Name            string `json:"name" validate:"required"`
 	Description     string `json:"description"`
 	Price           int64  `json:"price" validate:"gte=0"`
-	DurationMinutes int    `json:"duration_minutes" validate:"gte=0"`
+	DurationMinutes int    `json:"duration_minutes" validate:"gt=0"`
 	Status          string `json:"status" validate:"required,oneof=active inactive"`
 }
 
@@ -100,6 +100,27 @@ func (h *ServiceHandler) PublicList(c *fiber.Ctx) error {
 		"data":    publicServices,
 		"meta":    utils.NewPaginationMeta(page, limit, total),
 	})
+}
+
+func (h *ServiceHandler) PublicDetail(c *fiber.Ctx) error {
+	id, err := parseIDParam(c)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	service, err := h.serviceRepository.FindByID(id)
+	if err != nil {
+		if repositories.IsRecordNotFound(err) {
+			return utils.ErrorResponse(c, fiber.StatusNotFound, "layanan tidak ditemukan")
+		}
+
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal mengambil layanan publik")
+	}
+	if service.Status != "active" {
+		return utils.ErrorResponse(c, fiber.StatusNotFound, "layanan tidak ditemukan")
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "layanan berhasil diambil", toPublicServiceResponse(*service))
 }
 
 func (h *ServiceHandler) List(c *fiber.Ctx) error {

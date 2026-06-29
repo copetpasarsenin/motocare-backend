@@ -23,6 +23,7 @@ func SetupCRUDRoutes(app *fiber.App, db *gorm.DB) {
 	api := app.Group("/api")
 
 	api.Get("/public/services", serviceHandler.PublicList)
+	api.Get("/public/services/:id", serviceHandler.PublicDetail)
 	api.Get("/categories", categoryHandler.List)
 	api.Get("/categories/:id", categoryHandler.Detail)
 	api.Get("/services", serviceHandler.List)
