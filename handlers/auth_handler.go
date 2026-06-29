@@ -18,7 +18,6 @@ type registerRequest struct {
 	Username string `json:"username" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6"`
-	Role     string `json:"role" validate:"omitempty,oneof=admin user"`
 }
 
 type loginRequest struct {
@@ -53,11 +52,6 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 
 	request.Username = strings.TrimSpace(request.Username)
 	request.Email = strings.TrimSpace(strings.ToLower(request.Email))
-	request.Role = strings.TrimSpace(strings.ToLower(request.Role))
-
-	if request.Role == "" {
-		request.Role = "user"
-	}
 
 	if validationErrors := utils.ValidateStruct(request); validationErrors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -87,7 +81,7 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 		Username: request.Username,
 		Email:    request.Email,
 		Password: hashedPassword,
-		Role:     request.Role,
+		Role:     "user",
 	}
 
 	if err := h.userRepository.Create(&user); err != nil {

@@ -31,7 +31,6 @@ type RegisterRequestDoc struct {
 	Username string `json:"username" example:"budi"`
 	Email    string `json:"email" example:"budi@example.com"`
 	Password string `json:"password" example:"password123"`
-	Role     string `json:"role,omitempty" example:"user" enums:"admin,user"`
 }
 
 type LoginRequestDoc struct {

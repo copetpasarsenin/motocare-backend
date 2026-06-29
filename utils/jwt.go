@@ -2,8 +2,8 @@ package utils
 
 import (
 	"errors"
-	"motocare-dashboard/backend/config"
 	"motocare-dashboard/backend/models"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -17,7 +17,21 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
+func getJWTSecret() (string, error) {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		return "", errors.New("JWT_SECRET environment variable is required")
+	}
+
+	return secret, nil
+}
+
 func GenerateToken(user models.User) (string, error) {
+	secret, err := getJWTSecret()
+	if err != nil {
+		return "", err
+	}
+
 	claims := JWTClaims{
 		UserID:   user.ID,
 		Username: user.Username,
@@ -30,7 +44,7 @@ func GenerateToken(user models.User) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(config.GetEnv("JWT_SECRET", "change_this_secret")))
+	return token.SignedString([]byte(secret))
 }
 
 func ParseToken(tokenString string) (*JWTClaims, error) {
@@ -39,7 +53,12 @@ func ParseToken(tokenString string) (*JWTClaims, error) {
 			return nil, errors.New("invalid token signing method")
 		}
 
-		return []byte(config.GetEnv("JWT_SECRET", "change_this_secret")), nil
+		secret, err := getJWTSecret()
+		if err != nil {
+			return nil, err
+		}
+
+		return []byte(secret), nil
 	})
 	if err != nil {
 		return nil, err
