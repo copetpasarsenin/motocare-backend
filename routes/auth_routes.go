@@ -38,7 +38,6 @@ func SetupAuthRoutes(app *fiber.App, db *gorm.DB) {
 		LimitReached: rateLimitReached,
 	})
 
-	protected := app.Group("", middlewares.JWTAuth())
-	protected.Get("/me", middlewares.RoleAuthorization("admin", "user"), authHandler.Me)
-	protected.Put("/change-password", passwordLimiter, middlewares.RoleAuthorization("admin", "user"), authHandler.ChangePassword)
+	app.Get("/me", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), authHandler.Me)
+	app.Put("/change-password", middlewares.JWTAuth(), passwordLimiter, middlewares.RoleAuthorization("admin", "user"), authHandler.ChangePassword)
 }
