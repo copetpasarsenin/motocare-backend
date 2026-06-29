@@ -223,7 +223,7 @@ func (h *BookingHandler) UpdateStatus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "validasi gagal", "errors": validationErrors})
 	}
 
-	isFinalStatus := isAllowedValue(booking.Status, "completed", "cancelled", "rejected")
+	isFinalStatus := isAllowedValue(booking.Status, "completed", "cancelled")
 	if strings.EqualFold(claims.Role, "user") {
 		if isFinalStatus {
 			return utils.ErrorResponse(c, fiber.StatusBadRequest, "booking dengan status final tidak dapat diubah")
