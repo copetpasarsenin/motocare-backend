@@ -13,6 +13,7 @@ import (
 )
 
 var allowedBookingStatuses = []string{"pending", "confirmed", "in_progress", "completed", "cancelled"}
+var bookingLocation = time.FixedZone("WIB", 7*60*60)
 
 type BookingHandler struct {
 	bookingRepository repositories.BookingRepository
@@ -119,6 +120,35 @@ func (h *BookingHandler) Detail(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusOK, "booking berhasil diambil", booking)
 }
 
+func (h *BookingHandler) ReservedSlots(c *fiber.Ctx) error {
+	dateValue := strings.TrimSpace(c.Query("date"))
+	if dateValue == "" {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "date wajib diisi")
+	}
+
+	date, err := time.ParseInLocation("2006-01-02", dateValue, bookingLocation)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "date harus format YYYY-MM-DD")
+	}
+
+	start := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, bookingLocation)
+	end := start.AddDate(0, 0, 1)
+	slots, err := h.bookingRepository.ListReservedSlots(start, end)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal mengambil slot booking")
+	}
+
+	reservedSlots := make([]string, 0, len(slots))
+	for _, slot := range slots {
+		reservedSlots = append(reservedSlots, slot.In(bookingLocation).Format("15:04"))
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "slot booking berhasil diambil", fiber.Map{
+		"date":           dateValue,
+		"reserved_slots": reservedSlots,
+	})
+}
+
 func (h *BookingHandler) Create(c *fiber.Ctx) error {
 	claims, ok := middlewares.GetUserClaims(c)
 	if !ok {
@@ -164,6 +194,14 @@ func (h *BookingHandler) Create(c *fiber.Ctx) error {
 	bookingDate, err := parseBookingDate(request.BookingDate)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "booking_date harus format RFC3339 atau YYYY-MM-DD")
+	}
+
+	isReserved, err := h.bookingRepository.HasActiveBookingAt(bookingDate, 0)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "gagal memeriksa slot booking")
+	}
+	if isReserved {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "jam booking sudah terisi")
 	}
 
 	booking := models.Booking{
@@ -301,6 +339,13 @@ func (h *BookingHandler) applyAdminBookingUpdate(booking *models.Booking, reques
 		if err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, "booking_date harus format RFC3339 atau YYYY-MM-DD")
 		}
+		isReserved, err := h.bookingRepository.HasActiveBookingAt(bookingDate, booking.ID)
+		if err != nil {
+			return fiber.NewError(fiber.StatusInternalServerError, "gagal memeriksa slot booking")
+		}
+		if isReserved {
+			return fiber.NewError(fiber.StatusBadRequest, "jam booking sudah terisi")
+		}
 		booking.BookingDate = bookingDate
 	}
 	booking.Notes = request.Notes
@@ -330,6 +375,14 @@ func (h *BookingHandler) applyBookingDetailsUpdate(booking *models.Booking, requ
 	bookingDate, err := parseBookingDate(request.BookingDate)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "booking_date harus format RFC3339 atau YYYY-MM-DD")
+	}
+
+	isReserved, err := h.bookingRepository.HasActiveBookingAt(bookingDate, booking.ID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "gagal memeriksa slot booking")
+	}
+	if isReserved {
+		return fiber.NewError(fiber.StatusBadRequest, "jam booking sudah terisi")
 	}
 
 	booking.ServiceID = request.ServiceID

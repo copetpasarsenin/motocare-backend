@@ -31,6 +31,7 @@ func SetupCRUDRoutes(app *fiber.App, db *gorm.DB) {
 
 	// USER + ADMIN routes (register first to avoid conflicts)
 	api.Get("/bookings", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.List)
+	api.Get("/bookings/reserved-slots", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.ReservedSlots)
 	api.Get("/bookings/:id", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.Detail)
 	api.Post("/bookings", middlewares.JWTAuth(), middlewares.RoleAuthorization("admin", "user"), bookingHandler.Create)
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"motocare-dashboard/backend/models"
 	"strings"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -21,6 +22,8 @@ type BookingListParams struct {
 type BookingRepository interface {
 	List(params BookingListParams) ([]models.Booking, int64, error)
 	FindByID(id uint) (*models.Booking, error)
+	ListReservedSlots(start time.Time, end time.Time) ([]time.Time, error)
+	HasActiveBookingAt(bookingDate time.Time, excludeID uint) (bool, error)
 	Create(booking *models.Booking) error
 	Update(booking *models.Booking) (*models.Booking, error)
 	Delete(id uint) error
@@ -29,6 +32,8 @@ type BookingRepository interface {
 type bookingRepository struct {
 	db *gorm.DB
 }
+
+var activeBookingStatuses = []string{"pending", "confirmed", "in_progress"}
 
 func NewBookingRepository(db *gorm.DB) BookingRepository {
 	return &bookingRepository{db: db}
@@ -69,6 +74,36 @@ func (r *bookingRepository) FindByID(id uint) (*models.Booking, error) {
 	}
 
 	return &booking, nil
+}
+
+func (r *bookingRepository) ListReservedSlots(start time.Time, end time.Time) ([]time.Time, error) {
+	var slots []time.Time
+	if err := r.db.Model(&models.Booking{}).
+		Where("booking_date >= ? AND booking_date < ?", start, end).
+		Where("status IN ?", activeBookingStatuses).
+		Order("booking_date ASC").
+		Pluck("booking_date", &slots).Error; err != nil {
+		return nil, err
+	}
+
+	return slots, nil
+}
+
+func (r *bookingRepository) HasActiveBookingAt(bookingDate time.Time, excludeID uint) (bool, error) {
+	var total int64
+	query := r.db.Model(&models.Booking{}).
+		Where("booking_date = ?", bookingDate).
+		Where("status IN ?", activeBookingStatuses)
+
+	if excludeID != 0 {
+		query = query.Where("id <> ?", excludeID)
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return false, err
+	}
+
+	return total > 0, nil
 }
 
 func (r *bookingRepository) Create(booking *models.Booking) error {
@@ -112,5 +147,3 @@ func applyBookingFilters(query *gorm.DB, params BookingListParams) *gorm.DB {
 
 	return query
 }
-
-
