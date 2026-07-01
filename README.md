@@ -14,8 +14,8 @@ MotoCare adalah sistem manajemen bengkel motor berbasis web yang memungkinkan pe
 
 | Nama | NIM | Peran |
 |------|-----|-------|
-| ... | ... | Backend Developer |
-| ... | ... | Frontend Developer |
+| Richard Firmansyah | 714240047 | Backend Developer |
+| Wa Ode Nur Alia | 714240035 | Frontend Developer |
 
 ---
 
@@ -47,7 +47,7 @@ MotoCare adalah sistem manajemen bengkel motor berbasis web yang memungkinkan pe
 
 ### Deployment
 
-- Backend: **Render / Railway / Koyeb / Fly.io / VPS**
+- Backend: **Railway**
 - Frontend: **Vercel** (tersedia `vercel.json`)
 - Database: **Supabase Cloud**
 
@@ -613,11 +613,33 @@ Set `RUN_SEEDER=true` di `.env` backend untuk mengisi database dengan data conto
 
 | Item | Link |
 |------|------|
-| Repository GitHub Backend | [GitHub Backend URL] |
-| Repository GitHub Frontend | [GitHub Frontend URL] |
-| Deploy Backend | [Backend URL] |
-| Deploy Frontend | [Frontend URL] |
-| Swagger UI | [Backend URL]/docs |
+| Repository GitHub Backend | https://github.com/copetpasarsenin/motocare-backend |
+| Repository GitHub Frontend | https://github.com/copetpasarsenin/motocare-frontend |
+| Deploy Backend | https://motocare-backend-production.up.railway.app/ |
+| Deploy Frontend | https://motocare-frontend.vercel.app/ |
+| Swagger UI | https://motocare-backend-production.up.railway.app/docs/index.html |
+| Supabase Dashboard | https://supabase.com/dashboard/project/updmlcnmucfozgiuovan/editor |
+
+---
+
+## 📸 Screenshot
+
+Dokumentasi screenshot lengkap tersedia di file **DOKUMEN_MOTOCARE_TUGAS_BESAR.docx** (11 screenshot asli dari deploy + placeholder Supabase):
+
+| # | Halaman | URL |
+|---|---------|-----|
+| 1 | Home — Landing Page | https://motocare-frontend.vercel.app/ |
+| 2 | Login — Form Masuk | https://motocare-frontend.vercel.app/login |
+| 3 | Register — Form Daftar | https://motocare-frontend.vercel.app/register |
+| 4 | Services List — Katalog | https://motocare-frontend.vercel.app/services |
+| 5 | Service Detail | https://motocare-frontend.vercel.app/services/1 |
+| 6 | Dashboard Admin — Statistik + Chart | https://motocare-frontend.vercel.app/dashboard |
+| 7 | Bookings List — Tabel + Filter | https://motocare-frontend.vercel.app/bookings |
+| 8 | Profile — Akun + Password | https://motocare-frontend.vercel.app/profile |
+| 9 | Swagger UI — Dokumentasi API | https://motocare-backend-production.up.railway.app/docs/index.html |
+| 10 | JWT Token di localStorage | https://motocare-frontend.vercel.app/ (setelah login) |
+| 11 | Dashboard — Auth Terverifikasi | https://motocare-frontend.vercel.app/dashboard (setelah login) |
+| 12 | ⏳ Supabase Table Editor | https://supabase.com/dashboard/project/updmlcnmucfozgiuovan/editor |
 
 ---
 
